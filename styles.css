@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Edu+AU+VIC+WA+NT+Hand:wght@400..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Teko:wght@300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Edu+AU+VIC+WA+NT+Hand:wght@400..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Sora:wght@100..800&family=Teko:wght@300..700&display=swap');
+
+*{
+    padding: 0;
+    margin: 0;
+    font-family: "Teko", sans-serif;
+
+}
+body{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+h1{
+    margin-bottom: 1em;
+}
+label{
+    font-size: 30px;
+}
+form{
+    margin-bottom: 1em;
+    display: grid;
+    justify-content: center;
+    text-align: center;
+}
+input{
+    font-size: 30px;
+}
+h1.header{
+    font-size: 55px;
+}
+#board{
+    display: grid;
+    grid-template-columns: 150px 150px 150px;
+    grid-template-rows: 150px 150px 150px;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+.cell{
+    font-size: 100px;
+    font-family: "Sora", sans-serif;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid black;
+    border-collapse: collapse;
+    border-radius: 0;
+}
+.gray{
+    color: grey;
+    font-size: 1.3em;
+}
+button{
+    font-size: 30px;
+    border-radius: 10px;
+    padding-inline: 0.3em;
+    font-weight: bold;
+}
+form button{
+    margin-left: 0.5em;
+}
+.restart{
+    margin-top: 0.5em;
+}
+label[for="player2"]{
+    margin-left: 1em;
+}
+.start{
+ text-align: center;
+    margin-top: 1em;
+}
+.red{
+    color:red;
+    font-size: 1.4em;
+}
+.green{
+    color: green;
+    font-size: 1.4em;
+}

@@ -3,43 +3,47 @@
 ** Each equare holds a Cell (defined later)
 ** and we expose a dropToken method to be able to add Cells to squares
 */
-
+let form=document.querySelector('form');
+let resBtn=document.querySelector('.restart');
+let startBtn=document.querySelector('.start');
+let boardCont=document.querySelector('#board');
+boardCont.style.display="none";
 function Gameboard() {
     const rows = 3;
     const columns = 3;
-    const board = [];
-  
-    // Create a 2d array that will represent the state of the game board
-    // For this 2d array, row 0 will represent the top row and
-    // column 0 will represent the left-most column.
-    // This nested-loop technique is a simple and common way to create a 2d array.
-    // for (let i = 1; i <=rows; i++) {
-    //     board[i] = [];
-    //     for (let j = 1; j<=columns; j++) {
-    //       board[i].push(Cell());
-    //     }
-    //   }
+    let board = [];
+
+
     for (let i = 0; i < rows; i++) {
         board[i] = [];
         for (let j = 0; j < columns; j++) {
-          board[i].push(Cell());
+          board[i].push(Cell()); // here we are adding an object of the cell factory function into every index of our 2d array
         }
       }
   
     // This will be the method of getting the entire board that our
     // UI will eventually need to render it.
     const getBoard = () => board;
-  
-    // In order to drop a token, we need to find what the lowest point of the
-    // selected column is, *then* change that cell's value to the player number
+    const resetBoard = ()=>{
+      board = [];
+      for (let i = 0; i < rows; i++) {
+        board[i] = [];
+        for (let j = 0; j < columns; j++) {
+          board[i].push(Cell()); // here we are adding an object of the cell factory function into every index of our 2d array
+        }
+      }
+      return board;
+    }
+ 
+   
     const dropToken = (column,row, player) => {
      //cell is the specified cell we want to mark "x" or 'O' in
-      const cell=board[row-1][column-1];
-      const  isCellAvailable=cell.getValue()===0;
+      const cell=board[row][column];
+      const  isCellAvailable=cell.getValue()===0; // I am allowed to use getValue() which is a function of Cell() factory because 
+                                                 //every index of my array holds an object instance of the Cell factory function
+                                                 //this is so because of ' board[i].push(Cell()); '
+
       //We need to check if the cell we are clicking has a value - meaning is it taken already
-    //   const checkCellAvailable = (cell) => cell.getValue()===0;
-               //board.filter((row) => row[column].getValue() === 0).map(row => row[column]);
-  
         if(isCellAvailable){
             cell.addToken(player);
         }
@@ -56,7 +60,7 @@ function Gameboard() {
   
     // Here, we provide an interface for the rest of our
     // application to interact with the board
-    return { getBoard, dropToken, printBoard};
+    return { getBoard, dropToken, printBoard,resetBoard};
   }
   
   /*
@@ -89,19 +93,22 @@ function Gameboard() {
   ** anybody has won the game
   */
   function GameController(
-    playerOneName = "Player One",
-    playerTwoName = "Player Two"
+    playerOneName = document.querySelector('#player1').value,
+    playerTwoName = document.querySelector('#player2').value
   ) {
+    let ties=0;
     const board = Gameboard();
-  
+    let array=board.getBoard();
     const players = [
       {
         name: playerOneName,
-        token: 'X'
+        token: 'X',
+        score: 0
       },
       {
         name: playerTwoName,
-        token: 'O'
+        token: 'O',
+        score: 0
       }
     ];
   
@@ -111,19 +118,48 @@ function Gameboard() {
       activePlayer = activePlayer === players[0] ? players[1] : players[0];
     };
     const getActivePlayer = () => activePlayer;
+    const getFirstPlayer = () => players[0];
   
     const printNewRound = () => {
       board.printBoard();
       console.log(`${getActivePlayer().name}'s turn.`);
     };
-  
+    const checkWin = () =>{
+      const allHaveValues =  array.every(row => row.every(cell => cell.getValue() !== 0));
+      if(allHaveValues){
+        ties++;
+        array=board.resetBoard();
+      }
+      if(array[0][0].getValue()===array[0][1].getValue() && array[0][1].getValue()=== array[0][2].getValue() && array[0][0].getValue()!==0 || 
+        array[1][0].getValue()===array[1][1].getValue() && array[1][1].getValue()===array[1][2].getValue() && array[1][0].getValue()!==0 || 
+        array[2][0].getValue()===array[2][1].getValue() && array[2][1].getValue()===array[2][2].getValue() &&  array[2][0].getValue()!==0||
+        array[0][0].getValue()===array[1][0].getValue() && array[1][0].getValue()===array[2][0].getValue() && array[0][0].getValue()!==0 ||  
+        array[0][1].getValue()===array[1][1].getValue() && array[1][1].getValue()===array[2][1].getValue() && array[0][1].getValue()!==0 || 
+        array[0][2].getValue()===array[1][2].getValue() && array[1][2].getValue()===array[2][2].getValue() && array[0][2].getValue()!==0 || 
+        array[0][0].getValue()===array[1][1].getValue() && array[1][1].getValue()===array[2][2].getValue() && array[0][0].getValue()!==0 || 
+        array[2][0].getValue()===array[1][1].getValue() && array[1][1].getValue()===array[0][2].getValue() && array[2][0].getValue()!==0 
+       )
+       {
+        activePlayer.score++;
+        array=board.resetBoard();
+         board.printBoard();
+               }
+                
+                else return;
+    }
+    const getScore = ()=>{
+
+      let text=` <span class="red">${players[0].name}</span> ${players[0].score}   /   <span class="green">${players[1].name}</span> ${players[1].score}  / <span class="gray">Ties:</span> ${ties}`;
+      return text;
+    }
     const playRound = (row,column) => {
       // Drop a token for the current player
-      const array=board.getBoard();
-      const cell=array[row-1][column-1];
+   
+      const cell=array[row][column];
 
       if(!(cell.getValue()===0)){
         console.log('This spot is taken');
+        console.log(cell.getValue());
         return;
         // board.dropToken(column,row, getActivePlayer().token);
       }
@@ -132,15 +168,23 @@ function Gameboard() {
       );
     
       board.dropToken(column,row, getActivePlayer().token);
-    
-    
+      checkWin();
+      getScore();
   
       /*  This is where we would check for a winner and handle that logic,
           such as a win message. */
-  
+        // checkWin();
+
+        // if(winner){
+        //   return;
+        // }
+
+       
+     
       // Switch player turn
       switchPlayerTurn();
       printNewRound();
+     
     };
   
     // Initial play game message
@@ -150,8 +194,79 @@ function Gameboard() {
     // getActivePlayer for the UI version, so I'm revealing it now
     return {
       playRound,
-      getActivePlayer
+      getActivePlayer,
+      getBoard: board.getBoard,
+      checkWin,
+      getScore,
+      getFirstPlayer
     };
   }
+  function ScreenController() {
+    const game = GameController();
+    const playerTurnDiv = document.querySelector('.turn');
+    const boardDiv = document.querySelector('#board');
+    const score=document.querySelector('.score');
+    score.innerHTML=game.getScore();
   
-  const game = GameController();
+    const updateScreen = () => {
+      // clear the board
+      boardDiv.textContent = "";
+      score.innerHTML= game.getScore();
+  
+      // get the newest version of the board and player turn
+      const board = game.getBoard();
+      const activePlayer = game.getActivePlayer();
+      const firstPlayer=game.getFirstPlayer();
+  
+      // Display player's turn
+       playerTurnDiv.innerHTML = activePlayer===firstPlayer ? `<span class="red">${activePlayer.name}'s turn</span>` : `<span class="green">${activePlayer.name}'s turn</span>` //`${activePlayer.name}'s turn...`
+  
+      // Render board squares
+      board.forEach((row,rowIndex) => {
+        
+        row.forEach((cell, columnIndex) => {
+          // Anything clickable should be a button!!
+          const cellButton = document.createElement("button");
+          cellButton.classList.add("cell");
+          // Create a data attribute to identify the column
+          // This makes it easier to pass into our `playRound` function 
+          cellButton.dataset.column = columnIndex
+          cellButton.dataset.row=rowIndex;
+          cellButton.textContent = cell.getValue();
+          cellButton.textContent=cell.getValue()===0 ? "" : cell.getValue();
+          cellButton.style.color=cell.getValue()==='X' ? 'red' : 'green';
+          boardDiv.appendChild(cellButton); 
+        })
+      })
+    }
+  
+    // Add event listener for the board
+    function clickHandlerBoard(e) {
+      const selectedColumn = e.target.dataset.column;
+      const selectedRow=e.target.dataset.row;
+      // Make sure I've clicked a column and not the gaps in between
+      if (!selectedColumn && !selectedRow) return;
+      
+      game.playRound(selectedRow,selectedColumn);
+      updateScreen();
+    }
+    boardDiv.addEventListener("click", clickHandlerBoard);
+  
+    // Initial render
+    updateScreen();
+  
+    // We don't need to return anything from this module because everything is encapsulated inside this screen controller.
+  }
+form.addEventListener('submit',(event)=>{
+  event.preventDefault();
+  form.style.display="none";
+  startBtn.disabled=true;
+  boardCont.style.display="grid";
+  ScreenController();
+  resBtn.addEventListener('click',()=>{
+    ScreenController();
+    startBtn.disabled=false;
+    form.style.display="block";
+  })
+  
+});
