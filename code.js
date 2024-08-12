@@ -262,3 +262,57 @@ form.addEventListener('submit',(event)=>{ //
   })
   
 });
+//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//gameboard object - holds board and dropping the values in the cells
+//holds 2d array for the board which is made with a nested for loop in which cell objects of the cell factory function are added
+//printBoard with values to be able to display game in console
+//resetBoard after win or tie 
+//cell factory function
+//holds DropToken - responisble for adding value to the cell we have selected and checking if it is already empty as well
+//holds value addToken(playerToken) - adds the player's token into the cell
+// getValue - to get the value in a cell
+
+//gameController object - responsible for controlling the game
+//connects to the gameBoard object so we can connect with the current array
+//playRound function(row,column) - so we can select a cell and also checks if cell is taken return text to tell the player that he can't click on a taken spot
+//checkWin to check winning patterns in game
+//gameController object also has the players array which holds the 2 player's names and signature tokens
+//activePlayer tracking which player is in turn
+//switchTurn which switches based on players object array indexes [0] and [1]
+//printBoard - to show the current board
+
+//screenController object - responsible for the UI
+//attaches an event listener to the board container in HTML 
+//connects to the gameController object and gets current array from gameController which itself gets from Gameboard's board
+//updateScreen() - showing score values, current player's turn into text and changing text content of cellButtons to the value of the token of the player that clicked it
+//adds buttons which will serve as the cells in the array 
+//made with a nested for loop itterating through the board array while also taking column and row indexes while looping
+//this is neccessary because we need to know row and column index to start playRound function 
+//after we call playRound with event target on the clicked cell and taking row and column from dataset properties,
+//then we updateScreen which will delete the array and create a new one with the new cell values
+
+
+
